@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-//small comment
 
 test('login på shop.lemu.dk', async ({ page }) => {
-    // Gå til siden
-    await page.goto('https://shop.lemu.dk');
+    // Øg timeout for hele testen
+    test.setTimeout(60000);
 
-    // Vent på at siden er loadet
-    await page.waitForLoadState('networkidle');
+    // Gå til siden
+    await page.goto('https://shop.lemu.dk', { waitUntil: 'domcontentloaded' });
 
     // Håndter cookies hvis banneret er der
     try {
-        await page.click('.coi-banner__accept', { timeout: 3000 });
+        await page.waitForSelector('.coi-banner__accept', { timeout: 5000 });
+        await page.click('.coi-banner__accept');
         console.log('Cookie banner accepteret');
         await page.waitForTimeout(1000);
     } catch (e) {
@@ -20,14 +20,16 @@ test('login på shop.lemu.dk', async ({ page }) => {
     // Tag screenshot af forsiden
     await page.screenshot({ path: 'screenshots/01-forside.png', fullPage: true });
 
-    // Klik på "Log ind" knappen
+    // Vent på og klik på "Log ind" knappen
+    await page.waitForSelector('button.UserBottomNavigationLinks_loggedInItem__ieE7q', { timeout: 10000 });
     await page.locator('button.UserBottomNavigationLinks_loggedInItem__ieE7q').click();
 
-    // Vent på at login-modal åbner
-    await page.waitForTimeout(2000);
+    // Vent på at login-modal åbner og felterne er synlige
+    await page.waitForSelector('#loginID', { timeout: 10000 });
+    await page.waitForTimeout(1000);
     await page.screenshot({ path: 'screenshots/02-login-modal.png', fullPage: true });
 
-    // Udfyld login felter
+    // Udfyld login felter med miljøvariabler
     await page.fill('#loginID', process.env.LOGIN_EMAIL);
     await page.fill('#password', process.env.LOGIN_PASSWORD);
 
