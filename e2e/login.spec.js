@@ -1,9 +1,18 @@
 import { test, expect } from '@playwright/test';
 
 test('login på shop.lemu.dk', async ({ page }) => {
-    // Øg timeout for hele testen
     test.setTimeout(60000);
 
+    await page.goto('https://shop.lemu.dk', {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000
+    });
+
+    // Tag screenshot FØRST for at se hvad der vises
+    await page.screenshot({ path: 'screenshots/00-initial.png', fullPage: true });
+
+    // Vent for at lade bot checks køre
+    await page.waitForTimeout(3000);
     // Gå til siden
     await page.goto('https://shop.lemu.dk', { waitUntil: 'domcontentloaded' });
 
