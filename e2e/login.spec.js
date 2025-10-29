@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+//small comment
 
 test('login på shop.lemu.dk', async ({ page }) => {
     // Gå til siden
@@ -27,8 +28,8 @@ test('login på shop.lemu.dk', async ({ page }) => {
     await page.screenshot({ path: 'screenshots/02-login-modal.png', fullPage: true });
 
     // Udfyld login felter
-    await page.fill('#loginID', '');
-    await page.fill('#password', '');
+    await page.fill('#loginID', process.env.LOGIN_EMAIL);
+    await page.fill('#password', process.env.LOGIN_PASSWORD);
 
     await page.screenshot({ path: 'screenshots/03-felter-udfyldt.png' });
 
