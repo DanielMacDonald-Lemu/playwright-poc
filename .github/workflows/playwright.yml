@@ -11,6 +11,7 @@ jobs:
       LOGIN_EMAIL: ${{ secrets.LOGIN_EMAIL }}
       LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
       VERCEL_PASSWORD: ${{ secrets.VERCEL_PASSWORD }}
+      VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
