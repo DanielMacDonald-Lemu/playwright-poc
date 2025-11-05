@@ -8,10 +8,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      LOGIN_EMAIL: ${{ secrets.LOGIN_EMAIL }}
-      LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+      LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
+      LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_EMAIL_PASSWORD }}
       VERCEL_PASSWORD: ${{ secrets.VERCEL_PASSWORD }}
-      VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
+      VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

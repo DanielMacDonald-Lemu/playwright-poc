@@ -7,7 +7,7 @@ export const test = base.extend({
 
         // Add bypass header
         await page.setExtraHTTPHeaders({
-            'x-vercel-protection-bypass': process.env.VERCEL_BYPASS_TOKEN
+            'x-vercel-protection-bypass': process.env.VERCEL_TOKEN
         });
 
         await page.goto('https://lm-shop-frontend-git-develop-lemvigh-muller.vercel.app/da');
@@ -38,8 +38,8 @@ export const test = base.extend({
         await page.waitForSelector('#loginID', {timeout: 15000});
         await page.waitForTimeout(1000);
 
-        await page.fill('#loginID', process.env.LOGIN_EMAIL);
-        await page.fill('#password', process.env.LOGIN_PASSWORD);
+        await page.fill('#loginID', process.env.PLAYWRIGHT_TEST_EMAIL);
+        await page.fill('#password', process.env.PLAYWRIGHT_TEST_EMAIL_PASSWORD);
 
         // Submit
         await page.click('button.LoginForm_button__7DvMh[type="submit"]');
