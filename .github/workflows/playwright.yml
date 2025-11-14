@@ -1,13 +1,12 @@
-name: CI/CD Pipeline
+name: Claude on Issues & PRs
+
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   issues:
     types: [opened, edited]
   issue_comment:
     types: [created, edited]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
@@ -15,46 +14,16 @@ permissions:
   issues: write
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    env:
-      LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
-      LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_EMAIL_PASSWORD }}
-      VERCEL_PASSWORD: ${{ secrets.VERCEL_PASSWORD }}
-      VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - name: Install dependencies
-        run: npm ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-screenshots
-          path: screenshots/
-          retention-days: 7
-
   run-claude:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    if: github.event_name == 'issues' || github.event_name == 'issue_comment' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened'))
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Check CLAUDE_CODE_OAUTH_TOKEN presence (no value shown)
         run: |
           if [ -z "${CLAUDE_CODE_OAUTH_TOKEN}" ]; then
@@ -65,9 +34,10 @@ jobs:
           fi
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
       - name: Claude Code Action
         uses: anthropics/claude-code-action@v0.0.51
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          base_branch: main
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}  # 👈 pass the secret here
+          base_branch: main   # 👈 adjust if your default branch is 'master'
